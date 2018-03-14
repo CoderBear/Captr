@@ -1,11 +1,15 @@
 package com.udemy.sbsapps.captr;
 
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,10 +19,13 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener {
 
     EditText usernameET, passET;
     TextView loginText;
+
+    ImageView logoImageView;
+    ConstraintLayout constraintLayout;
 
     Button signUpButton;
 
@@ -33,8 +40,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         passET = findViewById(R.id.passEditText);
         loginText = findViewById(R.id.loginTextView);
         signUpButton = findViewById(R.id.signUpButton);
+        logoImageView = findViewById(R.id.imageView);
+        constraintLayout = findViewById(R.id.backgroundLayout);
 
         loginText.setOnClickListener(this);
+        passET.setOnKeyListener(this);
+        logoImageView.setOnClickListener(this);
+        constraintLayout.setOnClickListener(this);
 
         ParseAnalytics.trackAppOpenedInBackground(getIntent());
     }
@@ -90,6 +102,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 msg = "or, Login";
                 loginText.setText(msg);
             }
+        }else {
+            if(v.getId() == R.id.imageView || v.getId() == R.id.backgroundLayout) {
+                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+            }
         }
+    }
+
+    @Override
+    public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+        if(keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
+            signUpClicked(v);
+        }
+        return false;
     }
 }

@@ -1,5 +1,6 @@
 package com.udemy.sbsapps.captr;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -48,7 +49,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         logoImageView.setOnClickListener(this);
         constraintLayout.setOnClickListener(this);
 
+        if(ParseUser.getCurrentUser() != null) {
+            showUserList();
+        }
+
         ParseAnalytics.trackAppOpenedInBackground(getIntent());
+    }
+
+    public void showUserList() {
+        Intent intent = new Intent(getApplicationContext(), UserListActivity.class);
+        startActivity(intent);
     }
 
     public void signUpClicked(View view) {
@@ -65,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void done(ParseException e) {
                         if (e == null) {
                             Log.i("Signup", "Success");
+                            showUserList();
                         } else {
                             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -77,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void done(ParseUser user, ParseException e) {
                         if (user != null) {
                             Log.i("Login", "OK!");
+                            showUserList();
                         } else {
                         Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                         }

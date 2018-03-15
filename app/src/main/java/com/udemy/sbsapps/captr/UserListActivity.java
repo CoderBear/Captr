@@ -5,16 +5,17 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -27,7 +28,6 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.io.ByteArrayOutputStream;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +45,15 @@ public class UserListActivity extends AppCompatActivity {
         listView = findViewById(R.id.userListView);
         usernames = new ArrayList<>();
         arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, usernames);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getApplicationContext(), UserFeedActivity.class);
+                intent.putExtra("username", usernames.get(position));
+                startActivity(intent);
+            }
+        });
 
         ParseQuery<ParseUser> query = ParseUser.getQuery();query.whereNotEqualTo("username", ParseUser.getCurrentUser().getUsername());
         query.addAscendingOrder("username");
@@ -83,6 +92,11 @@ public class UserListActivity extends AppCompatActivity {
             } else {
                 getPhoto();
             }
+        } else if (item.getItemId() == R.id.logout) {
+            ParseUser.logOut();
+
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
